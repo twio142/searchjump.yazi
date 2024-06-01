@@ -219,12 +219,24 @@ end)
 
 
 return {
-	-- setup = function(state, opts)
-	-- 	-- Save the user configuration to the plugin's state
-	-- 	if (opts ~= nil and opts.icon_fg ~= nil ) then
-	-- 		state.opt_icon_fg  = opts.icon_fg
-	-- 	end
-	-- end,
+	setup = function(state, opts)
+		-- Save the user configuration to the plugin's state
+		if (opts ~= nil and opts.opt_unmatch_fg ~= nil ) then
+			state.opt_unmatch_fg  = opts.opt_unmatch_fg
+		end
+		if (opts ~= nil and opts.opt_match_str_fg ~= nil ) then
+			state.opt_match_str_fg  = opts.opt_match_str_fg
+		end
+		if (opts ~= nil and opts.opt_match_str_bg ~= nil ) then
+			state.opt_match_str_bg  = opts.opt_match_str_bg
+		end
+		if (opts ~= nil and opts.opt_lable_fg ~= nil ) then
+			state.opt_lable_fg  = opts.opt_lable_fg
+		end
+		if (opts ~= nil and opts.opt_lable_bg ~= nil ) then
+			state.opt_lable_bg  = opts.opt_lable_bg
+		end
+	end,
 
 	entry = function(_, args)
 
