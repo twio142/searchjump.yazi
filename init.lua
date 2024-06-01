@@ -16,12 +16,15 @@ local function get_match_position(name,find_str)
 	end
 end
 
-local set_match_label = ya.sync(function(state,name,startPos,endPos)
+local set_match_label = ya.sync(function(state,url,name)
 	local span = {}
 	local key = ""
-	if state.match[name].key then
-		key = state.match[name].key
+	if state.match[url].key then
+		key = state.match[url].key
 	end
+
+	local startPos = state.match[url].startPos
+	local endPos = state.match[url].endPos
 
 	if startPos == 1 then
 		span = ui.Line{ui.Span(name:sub(1,endPos)):fg("#000000"):bg("#73AC3A"),ui.Span(key):fg("#EADFC8"):bg("#BA603D"),ui.Span(name:sub(endPos+1,#name)):fg("#928374") }
@@ -31,7 +34,28 @@ local set_match_label = ya.sync(function(state,name,startPos,endPos)
 	return span
 end)
 
-local record_match_file = ya.sync(function (state,file,name,endPos)
+local update_match_table = ya.sync(function (state,folder,find_str)
+	if not folder then
+		return
+	end
+
+	for _, file in ipairs(folder.window) do
+		local name = file.name:gsub("\r", "?", 1)
+		local url = tostring(file.url)
+		local startPos, endPos = get_match_position(name,find_str)
+		if startPos then
+			state.match[url] = {
+				key = nil,
+				startPos = startPos,
+				endPos = endPos,
+			}
+		
+			state.next_char[#state.next_char +1] = string.lower(name:sub(endPos+1,endPos+1))
+		end
+	end
+end)
+
+local record_match_file = ya.sync(function (state,find_str)
 	if state.match == nil then
 		state.match = {}
 	end
@@ -40,14 +64,16 @@ local record_match_file = ya.sync(function (state,file,name,endPos)
 		state.next_char = {}
 	end
 
-	state.match[name] = {
-		key = nil,
-		file = tostring(file.url),
-	}
+	-- record match file from current window
+	update_match_table(Folder:by_kind(Folder.CURRENT),find_str)
 
-	state.next_char[#state.next_char +1] = string.lower(name:sub(endPos+1,endPos+1))
+	-- record match file from parent window
+	update_match_table(Folder:by_kind(Folder.PARENT),find_str)
 
+	-- record match file from preview window
+	update_match_table(Folder:by_kind(Folder.PREVIEW),find_str)
 
+	-- get valid key list
 	local valid_label = {}
 	for _, value in ipairs(KEYS_LABEL) do
 		local found = false
@@ -63,11 +89,15 @@ local record_match_file = ya.sync(function (state,file,name,endPos)
 		end
 	end
 
+	-- assign valid key to each match file
 	local i = 1
-	for name, _ in pairs(state.match) do
-		state.match[name].key =  valid_label[i]
+	for url, _ in pairs(state.match) do
+		state.match[url].key =  valid_label[i]
 		i = i + 1
 	end
+
+	-- flush page
+	ya.manager_emit("peek", { force = true })
 	ya.render()
 end)
 
@@ -89,11 +119,10 @@ local toggle_ui = ya.sync(function(st)
 	File.highlights = function(self, file)
 		local span = {}
 		local name = file.name:gsub("\r", "?", 1)
-		-- ya.err(st.target_str)
-		local startPos, endPos = get_match_position(name,st.target_str)
-		if startPos then
-			record_match_file(file,name,endPos)
-			span = set_match_label(name,startPos,endPos)
+		local url = tostring(file.url)
+
+		if st.match and st.match[url] then
+			span = set_match_label(url,name)
 		else
 			span = ui.Span(name):fg("#928374")		
 		end
@@ -116,10 +145,9 @@ end)
 local set_target_str =ya.sync(function(state,input_str)
 	local is_match_key = false
 	if state.match then
-		for name, _ in pairs(state.match) do
-			if state.match[name].key == input_str:sub(#input_str,#input_str) then
-				local file_url = state.match[name].file
-				ya.manager_emit(file_url:match("[/\\]$") and "cd" or "reveal", { file_url })
+		for url, _ in pairs(state.match) do
+			if state.match[url].key == input_str:sub(#input_str,#input_str) then
+				ya.manager_emit(url:match("[/\\]$") and "cd" or "reveal", { url })
 				is_match_key = true
 			end
 		end
@@ -128,6 +156,10 @@ local set_target_str =ya.sync(function(state,input_str)
 	state.match = nil
 	state.next_char = nil
 	state.target_str = input_str
+
+
+	record_match_file(input_str)
+
 	ya.render()
 	if is_match_key then
 		return true
