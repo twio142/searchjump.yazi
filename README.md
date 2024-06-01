@@ -34,5 +34,16 @@ run = "plugin searchjump"
 desc = "searchjump mode"
 ```
 
+## opts setting (~/.config/yazi/init.lua)
+```lua
+require("searchjump"):setup {
+	opt_unmatch_fg = "#928374",
+    opt_match_str_fg = "#000000",
+    opt_match_str_bg = "#73AC3A",
+    opt_lable_fg = "#EADFC8",
+    opt_lable_bg = "#BA603D"
+}
+```
+
 When you see some character singal lable in right of the entry.
 Press the key of the character will jump to the corresponding entry
