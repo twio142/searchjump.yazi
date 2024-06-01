@@ -5,7 +5,10 @@ A Yazi plugin which the behavior consistent with flash.nvim in Neovim, allow sea
 
 
 
-https://github.com/DreamMaoMao/searchjump.yazi/assets/30348075/4a00eb39-211b-47c5-8e22-644a7d7bc6b1
+https://github.com/DreamMaoMao/searchjump.yazi/assets/30348075/eec237c9-91be-4b6e-9db8-a84eb419cae5
+
+
+
 
 
 
