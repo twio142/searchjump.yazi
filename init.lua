@@ -1,4 +1,4 @@
-local KEYS_LABEL = {
+local KEYS_LABLE = {
 	"p", "b", "e", "t", "a", "o", "i", "n", "s", "r", "h", "l", "d", "c",
 	"u", "m", "f", "g", "w", "v", "k", "j", "x", "y", "q","z"
 }
@@ -31,7 +31,7 @@ local function get_match_position(name,find_str)
 	end
 end
 
-local set_match_label = ya.sync(function(state,url,name)
+local set_match_lable = ya.sync(function(state,url,name)
 	local span = {}
 	local key = ""
 	if state.match[url].key then
@@ -42,9 +42,9 @@ local set_match_label = ya.sync(function(state,url,name)
 	local endPos = state.match[url].endPos
 
 	if startPos == 1 then
-		span = ui.Line{ui.Span(name:sub(1,endPos)):fg("#000000"):bg("#73AC3A"),ui.Span(key):fg("#EADFC8"):bg("#BA603D"),ui.Span(name:sub(endPos+1,#name)):fg("#928374") }
+		span = ui.Line{ui.Span(name:sub(1,endPos)):fg(state.opt_match_str_fg):bg(state.opt_match_str_bg),ui.Span(key):fg(state.opt_lable_fg):bg(state.opt_lable_bg),ui.Span(name:sub(endPos+1,#name)):fg(state.opt_unmatch_fg) }
 	else
-		span = ui.Line{ui.Span(name:sub(1,startPos-1)):fg("#928374"),ui.Span(name:sub(startPos,endPos)):fg("#000000"):bg("#73AC3A"),ui.Span(key):fg("#EADFC8"):bg("#BA603D") ,ui.Span(name:sub(endPos+1,#name)):fg("#928374")}
+		span = ui.Line{ui.Span(name:sub(1,startPos-1)):fg(state.opt_unmatch_fg),ui.Span(name:sub(startPos,endPos)):fg(state.opt_match_str_fg):bg(state.opt_match_str_bg),ui.Span(key):fg(state.opt_lable_fg):bg(state.opt_lable_bg) ,ui.Span(name:sub(endPos+1,#name)):fg(state.opt_unmatch_fg)}
 	end
 	return span
 end)
@@ -91,8 +91,8 @@ local record_match_file = ya.sync(function (state,find_str)
 	update_match_table(Folder:by_kind(Folder.PREVIEW),find_str)
 
 	-- get valid key list
-	local valid_label = {}
-	for _, value in ipairs(KEYS_LABEL) do
+	local valid_lable = {}
+	for _, value in ipairs(KEYS_LABLE) do
 		local found = false
 		for _, v in ipairs(state.next_char) do
 			if value == v then
@@ -102,7 +102,7 @@ local record_match_file = ya.sync(function (state,find_str)
 		end
 	
 		if not found then
-			table.insert(valid_label,value)
+			table.insert(valid_lable,value)
 		end
 	end
 
@@ -110,7 +110,7 @@ local record_match_file = ya.sync(function (state,find_str)
 	local i = 1
 	for url, _ in pairs(state.match) do
 		exist_match = true
-		state.match[url].key =  valid_label[i]
+		state.match[url].key =  valid_lable[i]
 		i = i + 1
 	end
 
@@ -142,9 +142,9 @@ local toggle_ui = ya.sync(function(st)
 		local url = tostring(file.url)
 
 		if st.match and st.match[url] then
-			span = set_match_label(url,name)
+			span = set_match_lable(url,name)
 		else
-			span = ui.Span(name):fg("#928374")		
+			span = ui.Span(name):fg(st.opt_unmatch_fg)		
 		end
 
 		return span
@@ -194,6 +194,25 @@ local clear_state_str =ya.sync(function(state)
 
 end)
 
+local set_opts_default = ya.sync(function(state)
+	if (state.opt_unmatch_fg == nil) then
+		state.opt_unmatch_fg = "#928374"
+	end
+	if (state.opt_match_str_fg == nil) then
+		state.opt_match_str_fg = "#000000"
+	end
+	if (state.opt_match_str_bg == nil) then
+		state.opt_match_str_bg = "#73AC3A"
+	end
+	if (state.opt_lable_fg == nil) then
+		state.opt_lable_fg = "#EADFC8"
+	end
+	if (state.opt_lable_bg == nil) then
+		state.opt_lable_bg = "#BA603D"
+	end
+end)
+
+
 return {
 	-- setup = function(state, opts)
 	-- 	-- Save the user configuration to the plugin's state
@@ -204,9 +223,8 @@ return {
 
 	entry = function(_, args)
 
-		-- set_opts_default()
+		set_opts_default()
 
-		-- local action = args[1]
 		toggle_ui()
 
 		local input_str = ""
