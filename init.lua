@@ -5,7 +5,8 @@ local KEYS_LABLE = {
 
 local INPUT_KEY = {
 	"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n",
-	"o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y","z"
+	"o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y","z","0","1","2"
+	,"3","4","5","6","7","8","9","-","_",".","<Esc>"
 }
 
 local INPUT_CANDS = {
@@ -14,7 +15,9 @@ local INPUT_CANDS = {
 	{ on = "k" }, { on = "l" }, { on = "m" }, { on = "n" }, { on = "o" },
 	{ on = "p" }, { on = "q" }, { on = "r" }, { on = "s" }, { on = "t" },
 	{ on = "u" }, { on = "v" }, { on = "w" }, { on = "x" }, { on = "y" },
-	{ on = "z" }
+	{ on = "z" }, { on = "0" }, { on = "1" }, { on = "2" }, { on = "3" },
+	{ on = "4" }, { on = "5" }, { on = "6" }, { on = "7" }, { on = "8" },
+	{ on = "9" }, { on = "-" }, { on = "_" }, { on = "." }, { on = "<Esc>"}
 }
 
 
@@ -230,12 +233,21 @@ return {
 		local input_str = ""
 		while true do
 			local cand = ya.which { cands = INPUT_CANDS, silent = true }
+			if cand == nil then
+				goto continue
+			end
+
+			if INPUT_KEY[cand] == "<Esc>" then
+				break
+			end		
+
 			input_str = input_str .. INPUT_KEY[cand]
 
 			local want_exit = set_target_str(input_str)				
 			if want_exit then
 				break
 			end
+			::continue::
 		end
 
 		clear_state_str()
