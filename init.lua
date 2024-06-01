@@ -29,6 +29,8 @@ local function get_match_position(name,find_str)
 	local startPos,endPos = {},{}
 	local startp, endp
 
+	-- record all match start position and end position
+	-- startPos[index],endPos[index],sanme index corresponde a search result
 	endp = 0
 	while true do
 		startp, endp = string.find(string.lower(name), find_str, endp + 1)
@@ -46,6 +48,7 @@ local function get_match_position(name,find_str)
 	end
 end
 
+-- apply search result to show
 local set_match_lable = ya.sync(function(state,url,name)
 	local span = {}
 	local key = {}
@@ -73,6 +76,7 @@ local set_match_lable = ya.sync(function(state,url,name)
 	return span
 end)
 
+-- update the match data after input a str
 local update_match_table = ya.sync(function (state,folder,find_str)
 	if not folder then
 		return
@@ -141,7 +145,7 @@ local record_match_file = ya.sync(function (state,find_str)
 	for url, _ in pairs(state.match) do
 		exist_match = true
 		j = 1
-		while j <= #state.match[url].startPos do
+		while j <= #state.match[url].startPos do  -- some file may match multi position
 			table.insert(state.match[url].key,valid_lable[i])
 			i = i + 1
 			j = j + 1
@@ -209,7 +213,7 @@ local set_target_str =ya.sync(function(state,input_str)
 				end
 			end
 			
-			if found then
+			if found then -- if the last str match the lable key, toggle jump action
 				ya.manager_emit(url:match("[/\\]$") and "cd" or "reveal", { url })
 				is_match_key = true
 				break
