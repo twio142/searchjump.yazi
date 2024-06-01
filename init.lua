@@ -49,7 +49,7 @@ local function get_match_position(name,find_str)
 end
 
 -- apply search result to show
-local set_match_lable = ya.sync(function(state,url,name)
+local set_match_lable = ya.sync(function(state,url,name,file)
 	local span = {}
 	local key = {}
 	local i = 1
@@ -67,11 +67,20 @@ local set_match_lable = ya.sync(function(state,url,name)
 			table.insert(span,ui.Span(key[i]):fg(state.opt_lable_fg):bg(state.opt_lable_bg))
 		end
 		if i + 1 <= #startPos then
-			table.insert(span,ui.Span(name:sub(endPos[i]+1,startPos[i+1]-1)):fg(state.opt_unmatch_fg))
+			if file:is_hovered() then
+				table.insert(span,ui.Span(name:sub(endPos[i]+1,startPos[i+1]-1)))
+			else
+				table.insert(span,ui.Span(name:sub(endPos[i]+1,startPos[i+1]-1)):fg(state.opt_unmatch_fg))
+			end
 		end
 		i = i + 1
 	end
-	table.insert(span,ui.Span(name:sub(endPos[i-1]+1,#name)):fg(state.opt_unmatch_fg))
+	
+	if file:is_hovered() then
+		table.insert(span,ui.Span(name:sub(endPos[i-1]+1,#name)))
+	else
+		table.insert(span,ui.Span(name:sub(endPos[i-1]+1,#name)):fg(state.opt_unmatch_fg))
+	end
 	
 	return span
 end)
@@ -180,7 +189,9 @@ local toggle_ui = ya.sync(function(st)
 		local url = tostring(file.url)
 
 		if st.match and st.match[url] then
-			span = set_match_lable(url,name)
+			span = set_match_lable(url,name,file)
+		elseif file:is_hovered() then
+			span = ui.Span(name)	
 		else
 			span = ui.Span(name):fg(st.opt_unmatch_fg)		
 		end
