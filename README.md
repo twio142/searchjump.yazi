@@ -2,6 +2,13 @@
 
 A Yazi plugin which the behavior consistent with flash.nvim in Neovim, allow search str to generate lable to jump.
 
+
+
+
+https://github.com/DreamMaoMao/searchjump.yazi/assets/30348075/4a00eb39-211b-47c5-8e22-644a7d7bc6b1
+
+
+
 > [!NOTE]
 > The latest main branch of Yazi is required at the moment.
 
