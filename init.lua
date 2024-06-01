@@ -26,8 +26,20 @@ local function get_match_position(name,find_str)
 		return nil,nil
 	end
 
-	local startPos, endPos = string.find(string.lower(name), find_str)
-	if startPos then
+	local startPos,endPos = {},{}
+	local startp, endp
+
+	endp = 0
+	while true do
+		startp, endp = string.find(string.lower(name), find_str, endp + 1)
+		if not startp then
+			break
+		end
+		table.insert(startPos,startp)
+		table.insert(endPos,endp)
+	end
+
+	if #startPos > 0 then
 		return startPos, endPos
 	else
 		return nil,nil
@@ -36,19 +48,28 @@ end
 
 local set_match_lable = ya.sync(function(state,url,name)
 	local span = {}
-	local key = ""
-	if state.match[url].key then
+	local key = {}
+	local i = 1
+	if state.match[url].key and #state.match[url].key > 0 then
 		key = state.match[url].key
 	end
 
 	local startPos = state.match[url].startPos
 	local endPos = state.match[url].endPos
 
-	if startPos == 1 then
-		span = ui.Line{ui.Span(name:sub(1,endPos)):fg(state.opt_match_str_fg):bg(state.opt_match_str_bg),ui.Span(key):fg(state.opt_lable_fg):bg(state.opt_lable_bg),ui.Span(name:sub(endPos+1,#name)):fg(state.opt_unmatch_fg) }
-	else
-		span = ui.Line{ui.Span(name:sub(1,startPos-1)):fg(state.opt_unmatch_fg),ui.Span(name:sub(startPos,endPos)):fg(state.opt_match_str_fg):bg(state.opt_match_str_bg),ui.Span(key):fg(state.opt_lable_fg):bg(state.opt_lable_bg) ,ui.Span(name:sub(endPos+1,#name)):fg(state.opt_unmatch_fg)}
+	table.insert(span,ui.Span(name:sub(1,startPos[1]-1)):fg(state.opt_unmatch_fg))
+	while i <= #startPos do
+		table.insert(span,ui.Span(name:sub(startPos[i],endPos[i])):fg(state.opt_match_str_fg):bg(state.opt_match_str_bg))
+		if i <= #key then
+			table.insert(span,ui.Span(key[i]):fg(state.opt_lable_fg):bg(state.opt_lable_bg))
+		end
+		if i + 1 <= #startPos then
+			table.insert(span,ui.Span(name:sub(endPos[i]+1,startPos[i+1]-1)):fg(state.opt_unmatch_fg))
+		end
+		i = i + 1
 	end
+	table.insert(span,ui.Span(name:sub(endPos[i-1]+1,#name)):fg(state.opt_unmatch_fg))
+	
 	return span
 end)
 
@@ -57,18 +78,23 @@ local update_match_table = ya.sync(function (state,folder,find_str)
 		return
 	end
 
+	local i
+
 	for _, file in ipairs(folder.window) do
 		local name = file.name:gsub("\r", "?", 1)
 		local url = tostring(file.url)
 		local startPos, endPos = get_match_position(name,find_str)
 		if startPos then
 			state.match[url] = {
-				key = nil,
+				key = {},
 				startPos = startPos,
 				endPos = endPos,
 			}
-		
-			state.next_char[#state.next_char +1] = string.lower(name:sub(endPos+1,endPos+1))
+			i = 1
+			while i <=  #startPos do
+				state.next_char[#state.next_char +1] = string.lower(name:sub(endPos[i]+1,endPos[i]+1))
+				i = i + 1
+			end
 		end
 	end
 end)
@@ -111,10 +137,15 @@ local record_match_file = ya.sync(function (state,find_str)
 
 	-- assign valid key to each match file
 	local i = 1
+	local j 
 	for url, _ in pairs(state.match) do
 		exist_match = true
-		state.match[url].key =  valid_lable[i]
-		i = i + 1
+		j = 1
+		while j <= #state.match[url].startPos do
+			table.insert(state.match[url].key,valid_lable[i])
+			i = i + 1
+			j = j + 1
+		end			
 	end
 
 	-- flush page
@@ -167,15 +198,25 @@ end)
 
 local set_target_str =ya.sync(function(state,input_str)
 	local is_match_key = false
+	local final_input_str = input_str:sub(#input_str,#input_str)
+	local found = false
 	if state.match then
 		for url, _ in pairs(state.match) do
-			if state.match[url].key == input_str:sub(#input_str,#input_str) then
+			for _, value in ipairs(state.match[url].key) do
+				if value == final_input_str then
+					found = true
+					break
+				end
+			end
+			
+			if found then
 				ya.manager_emit(url:match("[/\\]$") and "cd" or "reveal", { url })
 				is_match_key = true
+				break
 			end
 		end
 	end
-	-- ya.err(input_str:sub(#input_str,#input_str))
+
 	state.match = nil
 	state.next_char = nil
 	state.target_str = input_str
