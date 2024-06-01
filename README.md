@@ -1,6 +1,6 @@
 # searchjump.yazi
 
-A Yazi plugin that it't the behavior consistent with flash.nvim in Neovim, allow use key char to precise selection.
+A Yazi plugin which the behavior consistent with flash.nvim in Neovim, allow search str to generate lable to jump.
 
 > [!NOTE]
 > The latest main branch of Yazi is required at the moment.
