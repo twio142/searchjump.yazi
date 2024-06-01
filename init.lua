@@ -3,6 +3,21 @@ local KEYS_LABEL = {
 	"u", "m", "f", "g", "w", "v", "k", "j", "x", "y", "q","z"
 }
 
+local INPUT_KEY = {
+	"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n",
+	"o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y","z"
+}
+
+local INPUT_CANDS = {
+	{ on = "a" }, { on = "b" }, { on = "c" }, { on = "d" }, { on = "e" },
+	{ on = "f" }, { on = "g" }, { on = "h" }, { on = "i" }, { on = "j" },
+	{ on = "k" }, { on = "l" }, { on = "m" }, { on = "n" }, { on = "o" },
+	{ on = "p" }, { on = "q" }, { on = "r" }, { on = "s" }, { on = "t" },
+	{ on = "u" }, { on = "v" }, { on = "w" }, { on = "x" }, { on = "y" },
+	{ on = "z" }
+}
+
+
 local function get_match_position(name,find_str)
 	if find_str == "" or find_str == nil then
 		return nil,nil
@@ -56,6 +71,8 @@ local update_match_table = ya.sync(function (state,folder,find_str)
 end)
 
 local record_match_file = ya.sync(function (state,find_str)
+	local exist_match = false
+
 	if state.match == nil then
 		state.match = {}
 	end
@@ -92,6 +109,7 @@ local record_match_file = ya.sync(function (state,find_str)
 	-- assign valid key to each match file
 	local i = 1
 	for url, _ in pairs(state.match) do
+		exist_match = true
 		state.match[url].key =  valid_label[i]
 		i = i + 1
 	end
@@ -99,6 +117,8 @@ local record_match_file = ya.sync(function (state,find_str)
 	-- flush page
 	ya.manager_emit("peek", { force = true })
 	ya.render()
+
+	return exist_match
 end)
 
 local toggle_ui = ya.sync(function(st)
@@ -158,10 +178,10 @@ local set_target_str =ya.sync(function(state,input_str)
 	state.target_str = input_str
 
 
-	record_match_file(input_str)
+	local exist_match = record_match_file(input_str)
 
 	ya.render()
-	if is_match_key then
+	if is_match_key or not exist_match then
 		return true
 	else
 		return false
@@ -189,20 +209,13 @@ return {
 		-- local action = args[1]
 		toggle_ui()
 
-		local input = ya.input({
-			realtime = true,
-			title = "",
-			position = { "bottom-right", y = -1, w = 10 },
-		})
-
+		local input_str = ""
 		while true do
-			local value, event = input:recv()
-			if event == 3 then
-				local want_exit = set_target_str(value)				
-				if want_exit then
-					break
-				end
-			else
+			local cand = ya.which { cands = INPUT_CANDS, silent = true }
+			input_str = input_str .. INPUT_KEY[cand]
+
+			local want_exit = set_target_str(input_str)				
+			if want_exit then
 				break
 			end
 		end
