@@ -1,6 +1,6 @@
 local KEYS_LABLE = {
-	"p", "b", "e", "t", "a", "o", "i", "n", "s", "r", "h", "l", "d", "c",
-	"u", "m", "f", "g", "w", "v", "k", "j", "x", "y", "q","z"
+	"j", "f", "d", "k", "l", "h", "g", "a", "s", "o", "i", "e", "u", "n", "c", "m", "r",
+	"p", "b", "t", "w", "v", "x", "y", "q", "z"
 }
 
 local INPUT_KEY = {
