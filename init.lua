@@ -193,6 +193,8 @@ end)
 
 local clear_state_str =ya.sync(function(state)
 	state.target_str = ""
+	state.match = nil
+	state.next_char = nil
 	ya.render()
 
 end)
