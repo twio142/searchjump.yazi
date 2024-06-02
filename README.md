@@ -33,6 +33,14 @@ if (!(Test-Path $env:APPDATA\yazi\config\plugins\)) {mkdir $env:APPDATA\yazi\con
 git clone https://github.com/DreamMaoMao/searchjump.yazi.git $env:APPDATA\yazi\config\plugins\searchjump.yazi
 ```
 
+> [!NOTE]
+> The main branch version does not support chinese jump, if you want to use the chinese support version, you can use the Chinese branch
+
+```
+git clone -b chinese https://github.com/DreamMaoMao/searchjump.yazi.git ~/.config/yazi/plugins/searchjump.yazi
+
+```
+
 ## Usage
 
 set shortcut key to toggle searchjump mode in `~/.config/yazi/keymap.toml`. for example set `i` to toggle searchjump mode
