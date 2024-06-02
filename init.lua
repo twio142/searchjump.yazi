@@ -60,10 +60,14 @@ local set_match_lable = ya.sync(function(state, url, name, file)
 	local startPos = state.match[url].startPos
 	local endPos = state.match[url].endPos
 
-	table.insert(span, ui.Span(name:sub(1, startPos[1] - 1)):fg(state.opt_unmatch_fg))
+	if file:is_hovered() then
+		table.insert(span, ui.Span(name:sub(1, startPos[1] - 1)))
+	else
+		table.insert(span, ui.Span(name:sub(1, startPos[1] - 1)):fg(state.opt_unmatch_fg))
+	end
+
 	while i <= #startPos do
-		table.insert(span, ui.Span(name:sub(startPos[i], endPos[i])):fg(state.opt_match_str_fg):bg(state
-		.opt_match_str_bg))
+		table.insert(span, ui.Span(name:sub(startPos[i], endPos[i])):fg(state.opt_match_str_fg):bg(state.opt_match_str_bg))
 		if i <= #key then
 			table.insert(span, ui.Span(key[i]):fg(state.opt_lable_fg):bg(state.opt_lable_bg))
 		end
