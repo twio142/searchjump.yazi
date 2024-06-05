@@ -310,7 +310,12 @@ return {
 				break
 			end
 
-			input_str = input_str .. INPUT_KEY[cand]
+			if INPUT_KEY[cand] == "." then
+				input_str = input_str .. "[.]"
+			else
+				input_str = input_str .. INPUT_KEY[cand]
+			end
+
 
 			local want_exit = set_target_str(input_str)
 			if want_exit then
