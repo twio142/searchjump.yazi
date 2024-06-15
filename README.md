@@ -65,7 +65,8 @@ require("searchjump"):setup {
     opt_match_str_fg = "#000000",
     opt_match_str_bg = "#73AC3A",
     opt_lable_fg = "#EADFC8",
-    opt_lable_bg = "#BA603D"
+    opt_lable_bg = "#BA603D",
+    opt_only_current = false, -- only search the current window
 }
 ```
 

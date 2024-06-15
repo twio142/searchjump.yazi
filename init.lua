@@ -133,10 +133,14 @@ local record_match_file = ya.sync(function(state, find_str)
 	update_match_table(Folder:by_kind(Folder.CURRENT), find_str)
 
 	-- record match file from parent window
-	update_match_table(Folder:by_kind(Folder.PARENT), find_str)
-
+	if not state.opt_only_current then
+		update_match_table(Folder:by_kind(Folder.PREVIEW), find_str)
+	end
 	-- record match file from preview window
-	update_match_table(Folder:by_kind(Folder.PREVIEW), find_str)
+	if not state.opt_only_current then
+		update_match_table(Folder:by_kind(Folder.PARENT), find_str)
+	end
+
 
 	-- get valid key list (KEYS_LABLE but exclude state.next_char table)
 	local valid_lable = {}
@@ -272,6 +276,9 @@ local set_opts_default = ya.sync(function(state)
 	if (state.opt_lable_bg == nil) then
 		state.opt_lable_bg = "#BA603D"
 	end
+	if (state.opt_only_current == nil) then
+		state.opt_only_current = false
+	end
 end)
 
 
@@ -302,6 +309,9 @@ return {
 		end
 		if (opts ~= nil and opts.opt_lable_bg ~= nil) then
 			state.opt_lable_bg = opts.opt_lable_bg
+		end
+		if (opts ~= nil and opts.opt_only_current ~= nil) then
+			state.opt_only_current = opts.opt_only_current
 		end
 	end,
 
