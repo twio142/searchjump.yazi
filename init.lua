@@ -107,6 +107,7 @@ local update_match_table = ya.sync(function(state, folder, find_str)
 				key = {},
 				startPos = startPos,
 				endPos = endPos,
+				isdir = file.cha.is_dir
 			}
 			i = 1
 			while i <= #startPos do -- the next char of match string can't be used as lable for supporing further search
@@ -225,7 +226,7 @@ local set_target_str = ya.sync(function(state, input_str)
 			end
 
 			if found then -- if the last str match is a lable key, not a search char, toggle jump action
-				ya.manager_emit(url:match("[/\\]$") and "cd" or "reveal", { url })
+				ya.manager_emit( (state.args_autocd and state.match[url].isdir) and "cd" or "reveal", { url })
 				is_match_key = true
 				break
 			end
@@ -274,6 +275,16 @@ local set_opts_default = ya.sync(function(state)
 end)
 
 
+local set_args_default = ya.sync(function(state,args)
+
+	if (args[1] ~= nil and args[1] == "autocd") then
+		state.args_autocd = true
+	else
+		state.args_autocd = false
+	end
+end)
+
+
 return {
 	setup = function(state, opts)
 		-- Save the user configuration to the plugin's state
@@ -295,7 +306,9 @@ return {
 	end,
 
 	entry = function(_, args)
+
 		set_opts_default()
+		set_args_default(args)
 
 		toggle_ui()
 

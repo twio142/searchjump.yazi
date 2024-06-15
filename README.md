@@ -50,6 +50,12 @@ set shortcut key to toggle searchjump mode in `~/.config/yazi/keymap.toml`. for 
 on   = [ "i" ]
 run = "plugin searchjump"
 desc = "searchjump mode"
+
+
+[[manager.prepend_keymap]]
+on   = [ "i" ]
+run = "plugin searchjump --args='autocd'"
+desc = "searchjump mode(auto cd select folder)"
 ```
 
 ## opts setting (~/.config/yazi/init.lua)
