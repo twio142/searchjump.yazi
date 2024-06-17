@@ -285,8 +285,6 @@ local set_target_str = ya.sync(function(state, input_str)
 			end
 
 			if found then -- if the last str match is a lable key, not a search char, toggle jump action
-				ya.err(state.args_autocd)
-				ya.err(state.match[url].isdir)
 				ya.manager_emit( (state.args_autocd and state.match[url].isdir) and "cd" or "reveal", { url })
 
 				is_match_key = true
