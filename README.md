@@ -13,7 +13,7 @@ https://github.com/DreamMaoMao/searchjump.yazi/assets/30348075/8acf8316-c8d4-497
 ## regular expression search(set patterns in option `opt_search_patterns`)
 - for example:
 ```lua
-opt_search_patterns = {"%.e%d+","s%d+e%d+","%d+.1080p","D##%d+J##"}
+opt_search_patterns = {"%.e%d+","s%d+e%d+","%d+.1080p","第%d+集"}
 ```
 
 https://github.com/DreamMaoMao/searchjump.yazi/assets/30348075/a68bd599-04c6-467a-a987-53a6684529af
