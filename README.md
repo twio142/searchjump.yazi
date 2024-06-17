@@ -1,6 +1,6 @@
 # searchjump.yazi
 
-A Yazi plugin which the behavior consistent with flash.nvim in Neovim, allow search str to generate lable to jump.support chinese pinyin search.
+A Yazi plugin which the behavior consistent with flash.nvim in Neovim, allow search str to generate lable to jump.support chinese pinyin search,regular expression search.
 
 
 
@@ -9,6 +9,14 @@ https://github.com/DreamMaoMao/searchjump.yazi/assets/30348075/eec237c9-91be-4b6
 
 ## chiese pinyin search(first character of a word pinyin)
 https://github.com/DreamMaoMao/searchjump.yazi/assets/30348075/8acf8316-c8d4-497d-af5a-7d85924c57a2
+
+## regular expression search(set patterns in option `opt_search_patterns`)
+- for example:
+```lua
+opt_search_patterns = {"%.e%d+","s%d+e%d+","%d+.1080p","D##%d+J##"}
+```
+
+https://github.com/DreamMaoMao/searchjump.yazi/assets/30348075/a68bd599-04c6-467a-a987-53a6684529af
 
 
 > [!NOTE]
