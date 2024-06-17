@@ -9,7 +9,7 @@ local KEYS_LABLE = {
 local INPUT_KEY = {
 	"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n",
 	"o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2"
-, "3", "4", "5", "6", "7", "8", "9", "-", "_", ".", "<Esc>"
+, "3", "4", "5", "6", "7", "8", "9", "-", "_", ".", "<Esc>","<Space>"
 }
 
 local INPUT_CANDS = {
@@ -20,7 +20,8 @@ local INPUT_CANDS = {
 	{ on = "u" }, { on = "v" }, { on = "w" }, { on = "x" }, { on = "y" },
 	{ on = "z" }, { on = "0" }, { on = "1" }, { on = "2" }, { on = "3" },
 	{ on = "4" }, { on = "5" }, { on = "6" }, { on = "7" }, { on = "8" },
-	{ on = "9" }, { on = "-" }, { on = "_" }, { on = "." }, { on = "<Esc>" }
+	{ on = "9" }, { on = "-" }, { on = "_" }, { on = "." }, { on = "<Esc>" },
+	{ on = "<Space>" }
 }
 
 
@@ -172,7 +173,7 @@ local update_match_table = ya.sync(function(state, folder, find_str)
 	end
 end)
 
-local record_match_file = ya.sync(function(state, find_str)
+local record_match_file = ya.sync(function(state, patterns)
 	local exist_match = false
 
 	if state.match == nil then
@@ -183,18 +184,20 @@ local record_match_file = ya.sync(function(state, find_str)
 		state.next_char = {}
 	end
 
-	-- record match file from current window
-	update_match_table(Folder:by_kind(Folder.CURRENT), find_str)
+	for _, pattern in ipairs(patterns) do
+		-- record match file from current window
+		update_match_table(Folder:by_kind(Folder.CURRENT), pattern)
 
-	-- record match file from parent window
-	if not state.opt_only_current then
-		update_match_table(Folder:by_kind(Folder.PARENT), find_str)
-	end
+		-- record match file from parent window
+		if not state.opt_only_current then
+			update_match_table(Folder:by_kind(Folder.PARENT), pattern)
+		end
 
-	-- record match file from preview window
-	if not state.opt_only_current then
-		update_match_table(Folder:by_kind(Folder.PREVIEW), find_str)
-	end
+		-- record match file from preview window
+		if not state.opt_only_current then
+			update_match_table(Folder:by_kind(Folder.PREVIEW), pattern)
+		end
+	end	
 
 	-- get valid key list (KEYS_LABLE but exclude state.next_char table)
 	local valid_lable = {}
@@ -271,9 +274,8 @@ local toggle_ui = ya.sync(function(st)
 end)
 
 
-local set_target_str = ya.sync(function(state, input_str)
+local set_target_str = ya.sync(function(state, patterns,final_input_str)
 	local is_match_key = false
-	local final_input_str = input_str:sub(#input_str, #input_str)
 	local found = false
 	if state.match then
 		for url, _ in pairs(state.match) do
@@ -298,7 +300,7 @@ local set_target_str = ya.sync(function(state, input_str)
 	state.next_char = nil
 
 	-- calculate match data
-	local exist_match = record_match_file(input_str)
+	local exist_match = record_match_file(patterns)
 
 	-- apply match data to render
 	ya.render()
@@ -335,6 +337,10 @@ local set_opts_default = ya.sync(function(state)
 	if (state.opt_only_current == nil) then
 		state.opt_only_current = false
 	end
+	if (state.opt_search_patterns == nil) then
+		state.opt_search_patterns = {}
+	end
+	return state.opt_search_patterns
 end)
 
 local set_args_default = ya.sync(function(state,args)
@@ -368,16 +374,21 @@ return {
 		if (opts ~= nil and opts.opt_only_current ~= nil) then
 			state.opt_only_current = opts.opt_only_current
 		end
+		if (opts ~= nil and opts.opt_search_patterns ~= nil) then
+			state.opt_search_patterns = opts.opt_search_patterns
+		end
 	end,
 
 	entry = function(_, args)
 
-		set_opts_default()
+		local opt_search_patterns = set_opts_default()
 		set_args_default(args)
 
 		toggle_ui()
 
 		local input_str = ""
+		local patterns = {}
+		local final_input_str = ""
 		while true do
 			local cand = ya.which { cands = INPUT_CANDS, silent = true }
 			if cand == nil then
@@ -388,13 +399,20 @@ return {
 				break
 			end
 
-			if INPUT_KEY[cand] == "." then
+			if INPUT_KEY[cand] == "<Space>" then
+				final_input_str = ""
+				patterns = opt_search_patterns
+			elseif INPUT_KEY[cand] == "." then
+				final_input_str = ""
 				input_str = input_str .. "[.]"
+				patterns = {input_str}
 			else
+				final_input_str = INPUT_KEY[cand]
 				input_str = input_str .. INPUT_KEY[cand]
+				patterns = {input_str}
 			end
 
-			local want_exit = set_target_str(input_str)
+			local want_exit = set_target_str(patterns,final_input_str)
 			if want_exit then
 				break
 			end

@@ -58,6 +58,7 @@ require("searchjump"):setup {
     opt_lable_fg = "#EADFC8",
     opt_lable_bg = "#BA603D",
     opt_only_current = false, -- only search the current window
+    opt_search_patterns = {}  -- demo:{"%.e%d+","s%d+e%d+"}
 }
 ```
 
@@ -65,3 +66,5 @@ When you see some character singal lable in right of the entry.
 Press the key of the character will jump to the corresponding entry.
 if you want to search chiese,for example,search `你好`,you can press `n` or `nh`
  to search.
+
+ the `<Space>` key is a special key when you are in sj mode,it will toggle search regular expression that set in opt_search_patterns.
