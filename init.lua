@@ -198,18 +198,36 @@ local record_match_file = ya.sync(function(state, patterns)
 		state.next_char = {}
 	end
 
+	local zh_to_en = ""
+	local covert_parttern
+
 	for _, pattern in ipairs(patterns) do
+		covert_parttern = ""
+		-- change chiese char to en char with "##" as marker
+		for ch in string.gmatch(pattern, "[%z\1-\127\194-\244][\128-\191]*") do
+			if ch:byte() > 127 then
+				zh_to_en = CH_TABLE[ch]
+				if zh_to_en then
+					covert_parttern = covert_parttern .. string.upper(zh_to_en) .. "##"
+				else
+					covert_parttern = covert_parttern .. ch
+				end
+			else
+				covert_parttern = covert_parttern .. ch
+			end
+		end	
+
 		-- record match file from current window
-		update_match_table(Folder:by_kind(Folder.CURRENT), pattern)
+		update_match_table(Folder:by_kind(Folder.CURRENT), covert_parttern)
 
 		-- record match file from parent window
 		if not state.opt_only_current then
-			update_match_table(Folder:by_kind(Folder.PARENT), pattern)
+			update_match_table(Folder:by_kind(Folder.PARENT), covert_parttern)
 		end
 
 		-- record match file from preview window
 		if not state.opt_only_current then
-			update_match_table(Folder:by_kind(Folder.PREVIEW), pattern)
+			update_match_table(Folder:by_kind(Folder.PREVIEW), covert_parttern)
 		end
 	end	
 
