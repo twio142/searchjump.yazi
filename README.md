@@ -4,12 +4,11 @@ A Yazi plugin which the behavior consistent with flash.nvim in Neovim, allow sea
 
 
 
-
+## english search
 https://github.com/DreamMaoMao/searchjump.yazi/assets/30348075/eec237c9-91be-4b6e-9db8-a84eb419cae5
 
-
-
-
+## chiese pinyin search(first character of a word pinyin)
+https://github.com/DreamMaoMao/searchjump.yazi/assets/30348075/8acf8316-c8d4-497d-af5a-7d85924c57a2
 
 
 > [!NOTE]
