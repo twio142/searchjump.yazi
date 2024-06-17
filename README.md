@@ -75,4 +75,12 @@ Press the key of the character will jump to the corresponding entry.
 if you want to search chiese,for example,search `你好`,you can press `n` or `nh`
  to search.
 
- the `<Space>` key is a special key when you are in sj mode,it will toggle search regular expression that set in opt_search_patterns.
+
+## if you want use re math
+
+- the `<Space>` key is a special key when you are in sj mode,it will toggle search regular expression that set in opt_search_patterns.
+
+- It is worth noting that all file names are converted to lowercase in sj match mode. So your English matches should all use lowercase letter.
+
+- In addition Chinese characters are converted to special ones(first capital letter in pinyin + `##`),for example `你` to `N##`.
+
