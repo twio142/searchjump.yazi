@@ -16,7 +16,7 @@ local INPUT_KEY = {
 	"Z",
 	"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n",
 	"o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2"
-	, "3", "4", "5", "6", "7", "8", "9", "-", "_", ".", "<Esc>","<Space>"
+	, "3", "4", "5", "6", "7", "8", "9", "-", "_", ".", "<Esc>","<Space>","<Enter>"
 }
 
 local INPUT_CANDS = {
@@ -35,7 +35,7 @@ local INPUT_CANDS = {
 	{ on = "z" }, { on = "0" }, { on = "1" }, { on = "2" }, { on = "3" },
 	{ on = "4" }, { on = "5" }, { on = "6" }, { on = "7" }, { on = "8" },
 	{ on = "9" }, { on = "-" }, { on = "_" }, { on = "." }, { on = "<Esc>" },
-	{ on = "<Space>" }
+	{ on = "<Space>" }, { on = "<Enter>" }
 }
 
 
@@ -431,7 +431,10 @@ return {
 				break
 			end
 
-			if INPUT_KEY[cand] == "<Space>" then
+			if INPUT_KEY[cand] == "<Enter>" then
+				final_input_str = KEYS_LABLE[1]
+				patterns = ""
+			elseif INPUT_KEY[cand] == "<Space>" then
 				final_input_str = ""
 				patterns = opt_search_patterns
 			elseif INPUT_KEY[cand] == "." then
