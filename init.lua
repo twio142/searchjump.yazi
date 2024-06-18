@@ -210,10 +210,10 @@ local record_match_file = ya.sync(function(state, patterns)
 				if zh_to_en then
 					covert_parttern = covert_parttern .. string.upper(zh_to_en) .. "##"
 				else
-					covert_parttern = covert_parttern .. ch
+					covert_parttern = covert_parttern .. string.lower(ch)
 				end
 			else
-				covert_parttern = covert_parttern .. ch
+				covert_parttern = covert_parttern .. string.lower(ch)
 			end
 		end	
 

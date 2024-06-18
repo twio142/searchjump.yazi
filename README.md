@@ -76,8 +76,8 @@ if you want to search chiese,for example,search `你好`,you can press `n` or `n
  to search.
 
 
-## if you want use re math
+## if you want use re match
 
 - the `<Space>` key is a special key when you are in sj mode,it will toggle search regular expression that set in opt_search_patterns.
 
-- It is worth noting that all file names are converted to lowercase in sj match mode. So your English matches should all use lowercase letter.
+- It is worth noting that the re match is case insensitive whether you use uppercase or lowercase in your regular expression
