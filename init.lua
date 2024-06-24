@@ -307,33 +307,35 @@ local toggle_ui = ya.sync(function(st)
 	ya.manager_emit("peek", { force = true })
 end)
 
+local check_key_is_lable = ya.sync(function(state,final_input_str) 
+	if not state.match then
+		return nil
+	end
 
-local set_target_str = ya.sync(function(state, patterns,final_input_str)
-	local is_match_key = false
-	local found = false
-	if state.match then
-		for url, _ in pairs(state.match) do
-			for _, value in ipairs(state.match[url].key) do
-				if value == final_input_str then
-					found = true
-					break
-				end
-			end
-
-			if found then -- if the last str match is a lable key, not a search char, toggle jump action
-				if not state.args_autocd and  state.match[url].pane == "current" then -- if target file in current pane, use `arrow` instead of `reveal` to support select mode
-					local folder = Folder:by_kind(Folder.CURRENT)
-					ya.manager_emit("arrow",{ state.match[url].cursorPos - folder.cursor - 1 + folder.offset})
-				elseif state.args_autocd and state.match[url].isdir then
-					ya.manager_emit("cd",{ url })
-				else
-					ya.manager_emit("reveal",{ url })
-				end
-
-				is_match_key = true
-				break
+	for url, _ in pairs(state.match) do
+		for _, value in ipairs(state.match[url].key) do
+			if value == final_input_str then
+				return url
 			end
 		end
+	end
+
+	return nil
+end)
+
+local set_target_str = ya.sync(function(state, patterns, final_input_str)
+
+	local url = check_key_is_lable(final_input_str)
+	if url then -- if the last str match is a lable key, not a searchchar,toggle jump action
+		if not state.args_autocd and  state.match[url].pane == "current"then-- if target file in current pane, use `arrow` instead of`reveal` tosupport select mode
+			local folder = Folder:by_kind(Folder.CURRENT)
+			ya.manager_emit("arrow",{ state.match[url].cursorPos - folder.cursor - 1 + folder.offset})
+		elseif state.args_autocd and state.match[url].isdir then
+			ya.manager_emit("cd",{ url })
+		else
+			ya.manager_emit("reveal",{ url })
+		end
+		return true
 	end
 
 	-- clears the previously calculated data when input change
@@ -346,7 +348,7 @@ local set_target_str = ya.sync(function(state, patterns,final_input_str)
 	-- apply match data to render
 	ya.render()
 
-	if is_match_key or not exist_match then
+	if not exist_match then
 		return true -- hit lable key or no match file
 	else
 		return false
