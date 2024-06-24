@@ -48,18 +48,12 @@ local function get_match_position(name, find_str)
 	local startp, endp
 	local convert_name = ""
 	local convert_find_str = ""
-	local zh_to_en 
 	name = string.lower(name)
 
 	-- change chiese char to en char with "##" as marker
 	for ch in string.gmatch(name, "[%z\1-\127\194-\244][\128-\191]*") do
-		if ch:byte() > 127 then
-			zh_to_en = CH_TABLE[ch]
-			if zh_to_en then
-				convert_name = convert_name .. string.upper(zh_to_en) .. "##"
-			else
-				convert_name = convert_name .. ch
-			end
+		if ch:byte() > 127 and CH_TABLE[ch] then
+			convert_name = convert_name .. string.upper(CH_TABLE[ch]) .. "##"
 		else
 			convert_name = convert_name .. ch
 		end
@@ -200,20 +194,14 @@ local record_match_file = ya.sync(function(state, patterns)
 		state.next_char = {}
 	end
 
-	local zh_to_en = ""
 	local covert_parttern
 
 	for _, pattern in ipairs(patterns) do
 		covert_parttern = ""
 		-- change chiese char to en char with "##" as marker
 		for ch in string.gmatch(pattern, "[%z\1-\127\194-\244][\128-\191]*") do
-			if ch:byte() > 127 then
-				zh_to_en = CH_TABLE[ch]
-				if zh_to_en then
-					covert_parttern = covert_parttern .. string.upper(zh_to_en) .. "##"
-				else
-					covert_parttern = covert_parttern .. string.lower(ch)
-				end
+			if ch:byte() > 127 and CH_TABLE[ch] then
+				covert_parttern = covert_parttern .. string.upper(CH_TABLE[ch]) .. "##"
 			else
 				covert_parttern = covert_parttern .. string.lower(ch)
 			end
@@ -348,11 +336,7 @@ local set_target_str = ya.sync(function(state, patterns, final_input_str)
 	-- apply match data to render
 	ya.render()
 
-	if not exist_match then
-		return true -- hit lable key or no match file
-	else
-		return false
-	end
+	return not exist_match and true or false
 end)
 
 local clear_state_str = ya.sync(function(state)
