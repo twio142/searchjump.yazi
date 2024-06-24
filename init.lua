@@ -251,7 +251,9 @@ local record_match_file = ya.sync(function(state, patterns)
 	end
 
 	-- flush page
-	ya.manager_emit("peek", { force = true })
+	if Folder:by_kind(Folder.PREVIEW) then
+		ya.manager_emit("peek", { force = true })
+	end
 	ya.render()
 
 	return exist_match
@@ -260,7 +262,9 @@ end)
 local toggle_ui = ya.sync(function(st)
 	if st.highlights or st.mode then
 		File.highlights, Status.mode, st.highlights, st.mode = st.highlights, st.mode, nil, nil
-		ya.manager_emit("peek", { force = true })
+		if Folder:by_kind(Folder.PREVIEW) then
+			ya.manager_emit("peek", { force = true })
+		end
 		ya.render()
 		return
 	end
@@ -292,7 +296,9 @@ local toggle_ui = ya.sync(function(st)
 		}
 	end
 
-	ya.manager_emit("peek", { force = true })
+	if Folder:by_kind(Folder.PREVIEW) then
+		ya.manager_emit("peek", { force = true })
+	end
 end)
 
 local check_key_is_lable = ya.sync(function(state,final_input_str) 
