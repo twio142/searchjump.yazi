@@ -160,14 +160,14 @@ local set_match_lable = ya.sync(function(state, url, name, file)
 end)
 
 -- update the match data after input a str
-local update_match_table = ya.sync(function(state, folder, find_str)
+local update_match_table = ya.sync(function(state, pane, folder, find_str)
 	if not folder then
 		return
 	end
 
 	local i
 
-	for _, file in ipairs(folder.window) do
+	for i, file in ipairs(folder.window) do
 		local name = file.name:gsub("\r", "?", 1)
 		local url = tostring(file.url)
 		local startPos, endPos, convert_name = get_match_position(name, find_str)
@@ -176,7 +176,9 @@ local update_match_table = ya.sync(function(state, folder, find_str)
 				key = {},
 				startPos = startPos,
 				endPos = endPos,
-				isdir = file.cha.is_dir
+				isdir = file.cha.is_dir,
+				pane = pane,
+				cursorPos = i,
 			}
 			i = 1
 			while i <= #startPos do -- the next char of match string can't be used as lable for supporing further search
@@ -218,16 +220,16 @@ local record_match_file = ya.sync(function(state, patterns)
 		end	
 
 		-- record match file from current window
-		update_match_table(Folder:by_kind(Folder.CURRENT), covert_parttern)
+		update_match_table("current",Folder:by_kind(Folder.CURRENT), covert_parttern)
 
 		-- record match file from parent window
 		if not state.opt_only_current then
-			update_match_table(Folder:by_kind(Folder.PARENT), covert_parttern)
+			update_match_table("parent", Folder:by_kind(Folder.PARENT), covert_parttern)
 		end
 
 		-- record match file from preview window
 		if not state.opt_only_current then
-			update_match_table(Folder:by_kind(Folder.PREVIEW), covert_parttern)
+			update_match_table("preview", Folder:by_kind(Folder.PREVIEW), covert_parttern)
 		end
 	end	
 
@@ -319,7 +321,14 @@ local set_target_str = ya.sync(function(state, patterns,final_input_str)
 			end
 
 			if found then -- if the last str match is a lable key, not a search char, toggle jump action
-				ya.manager_emit( (state.args_autocd and state.match[url].isdir) and "cd" or "reveal", { url })
+				if not state.args_autocd and  state.match[url].pane == "current" then -- if target file in current pane, use `arrow` instead of `reveal` to support select mode
+					local folder = Folder:by_kind(Folder.CURRENT)
+					ya.manager_emit("arrow",{ state.match[url].cursorPos - folder.cursor - 1 + folder.offset})
+				elseif state.args_autocd and state.match[url].isdir then
+					ya.manager_emit("cd",{ url })
+				else
+					ya.manager_emit("reveal",{ url })
+				end
 
 				is_match_key = true
 				break
