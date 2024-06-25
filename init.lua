@@ -8,12 +8,8 @@ local KEYS_LABLE = {
 }
 
 local INPUT_KEY = {
-	"A", "B", "C", "D", "E",
-	"F", "G", "H", "I", "J",
-	"K", "L", "M", "N", "O",
-	"P", "Q", "R", "S", "T",
-	"U", "V", "W", "X", "Y",
-	"Z",
+	"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O","P", "Q", "R", "S", "T","U", "V", "W", "X", "Y","Z",
+
 	"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n",
 	"o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2"
 	, "3", "4", "5", "6", "7", "8", "9", "-", "_", ".", "<Esc>","<Space>","<Enter>"
@@ -210,13 +206,10 @@ local record_match_file = ya.sync(function(state, patterns)
 		-- record match file from current window
 		update_match_table("current",Folder:by_kind(Folder.CURRENT), covert_parttern)
 
-		-- record match file from parent window
 		if not state.opt_only_current then
+			-- record match file from parent window
 			update_match_table("parent", Folder:by_kind(Folder.PARENT), covert_parttern)
-		end
-
-		-- record match file from preview window
-		if not state.opt_only_current then
+			-- record match file from preview window
 			update_match_table("preview", Folder:by_kind(Folder.PREVIEW), covert_parttern)
 		end
 	end	
