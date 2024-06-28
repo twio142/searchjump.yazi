@@ -10,10 +10,10 @@ https://github.com/DreamMaoMao/searchjump.yazi/assets/30348075/eec237c9-91be-4b6
 ## chiese pinyin search(first character of a word pinyin)
 https://github.com/DreamMaoMao/searchjump.yazi/assets/30348075/8acf8316-c8d4-497d-af5a-7d85924c57a2
 
-## regular expression search(set patterns in option `opt_search_patterns`)
+## regular expression search(set patterns in option `search_patterns`)
 - for example:
 ```lua
-opt_search_patterns = {"%.e%d+","s%d+e%d+","%d+.1080p","第%d+集"}
+search_patterns = {"%.e%d+","s%d+e%d+","%d+.1080p","第%d+集"}
 ```
 
 https://github.com/DreamMaoMao/searchjump.yazi/assets/30348075/a68bd599-04c6-467a-a987-53a6684529af
@@ -60,13 +60,13 @@ desc = "searchjump mode(auto cd select folder)"
 ## opts setting (~/.config/yazi/init.lua)
 ```lua
 require("searchjump"):setup {
-	opt_unmatch_fg = "#928374",
-    opt_match_str_fg = "#000000",
-    opt_match_str_bg = "#73AC3A",
-    opt_lable_fg = "#EADFC8",
-    opt_lable_bg = "#BA603D",
-    opt_only_current = false, -- only search the current window
-    opt_search_patterns = {}  -- demo:{"%.e%d+","s%d+e%d+"}
+	unmatch_fg = "#928374",
+    match_str_fg = "#000000",
+    match_str_bg = "#73AC3A",
+    lable_fg = "#EADFC8",
+    lable_bg = "#BA603D",
+    only_current = false, -- only search the current window
+    search_patterns = {}  -- demo:{"%.e%d+","s%d+e%d+"}
 }
 ```
 
@@ -78,7 +78,7 @@ if you want to search chiese,for example,search `你好`,you can press `n` or `n
 
 ## It is worth noting
 
-- the `<Space>` key is a special key when you are in sj mode,it will toggle search regular expression that set in opt_search_patterns.
+- the `<Space>` key is a special key when you are in sj mode,it will toggle search regular expression that set in search_patterns.
 
 -  the re match is case insensitive whether you use uppercase or lowercase in your regular expression
 

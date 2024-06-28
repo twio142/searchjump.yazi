@@ -381,27 +381,27 @@ end)
 return {
 	setup = function(state, opts)
 		-- Save the user configuration to the plugin's state
-		if (opts ~= nil and opts.opt_unmatch_fg ~= nil) then
-			state.opt_unmatch_fg = opts.opt_unmatch_fg
+		if (opts ~= nil and opts.unmatch_fg ~= nil) then
+			state.opt_unmatch_fg = opts.unmatch_fg
 		end
-		if (opts ~= nil and opts.opt_match_str_fg ~= nil) then
-			state.opt_match_str_fg = opts.opt_match_str_fg
+		if (opts ~= nil and opts.match_str_fg ~= nil) then
+			state.opt_match_str_fg = opts.match_str_fg
 		end
-		if (opts ~= nil and opts.opt_match_str_bg ~= nil) then
-			state.opt_match_str_bg = opts.opt_match_str_bg
+		if (opts ~= nil and opts.match_str_bg ~= nil) then
+			state.opt_match_str_bg = opts.match_str_bg
 		end
-		if (opts ~= nil and opts.opt_lable_fg ~= nil) then
-			state.opt_lable_fg = opts.opt_lable_fg
+		if (opts ~= nil and opts.lable_fg ~= nil) then
+			state.opt_lable_fg = opts.lable_fg
 		end
-		if (opts ~= nil and opts.opt_lable_bg ~= nil) then
-			state.opt_lable_bg = opts.opt_lable_bg
+		if (opts ~= nil and opts.lable_bg ~= nil) then
+			state.opt_lable_bg = opts.lable_bg
 		end
 
-		if (opts ~= nil and opts.opt_only_current ~= nil) then
-			state.opt_only_current = opts.opt_only_current
+		if (opts ~= nil and opts.only_current ~= nil) then
+			state.opt_only_current = opts.only_current
 		end
-		if (opts ~= nil and opts.opt_search_patterns ~= nil) then
-			state.opt_search_patterns = opts.opt_search_patterns
+		if (opts ~= nil and opts.search_patterns ~= nil) then
+			state.opt_search_patterns = opts.search_patterns
 		end
 	end,
 
