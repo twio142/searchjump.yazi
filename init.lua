@@ -405,6 +405,18 @@ local flush_input_key_in_statusbar = ya.sync(function(state,input_str)
 	ya.render()
 end)
 
+local get_first_match_lable = ya.sync(function(state)
+	if state.match == nil then
+		return nil
+	end
+
+	for url, _ in pairs(state.match) do
+		return #state.match[url].key > 0 and state.match[url].key[1] or nil
+	end	
+	
+	return nil
+end)
+
 local set_args_default = ya.sync(function(state,args)
 
 	if (args[1] ~= nil and args[1] == "autocd") then
@@ -468,10 +480,11 @@ return {
 			end
 
 			if INPUT_KEY[cand] == "<Enter>" then
-				final_input_str = KEYS_LABLE[1]
+				final_input_str = get_first_match_lable()
 				patterns = ""
 			elseif INPUT_KEY[cand] == "<Space>" then
 				final_input_str = ""
+				input_str = ""
 				patterns = opt_search_patterns
 			elseif INPUT_KEY[cand] == "<Backspace>" then
 				input_str,final_input_str = backout_last_input(input_str)
