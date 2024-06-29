@@ -150,7 +150,7 @@ local set_match_lable = ya.sync(function(state, url, name, file)
 end)
 
 -- update the match data after input a str
-local update_match_table = ya.sync(function(state, pane, folder, find_str)
+local update_match_table = ya.sync(function(state, pane, folder, convert_pattern,pattern)
 	if not folder then
 		return
 	end
@@ -160,8 +160,9 @@ local update_match_table = ya.sync(function(state, pane, folder, find_str)
 	for i, file in ipairs(folder.window) do
 		local name = file.name:gsub("\r", "?", 1)
 		local url = tostring(file.url)
-		local startPos, endPos, convert_name = get_match_position(name, find_str)
+		local startPos, endPos, convert_name = get_match_position(name, convert_pattern)
 		if startPos then
+			state.match_pattern = pattern
 			state.match[url] = {
 				key = {},
 				startPos = startPos,
@@ -191,6 +192,7 @@ local record_match_file = ya.sync(function(state, patterns)
 	end
 
 	local covert_parttern
+	local pattern
 
 	for _, pattern in ipairs(patterns) do
 		covert_parttern = ""
@@ -204,13 +206,13 @@ local record_match_file = ya.sync(function(state, patterns)
 		end	
 
 		-- record match file from current window
-		update_match_table("current",Folder:by_kind(Folder.CURRENT), covert_parttern)
+		update_match_table("current",Folder:by_kind(Folder.CURRENT), covert_parttern,pattern)
 
 		if not state.opt_only_current then
 			-- record match file from parent window
-			update_match_table("parent", Folder:by_kind(Folder.PARENT), covert_parttern)
+			update_match_table("parent", Folder:by_kind(Folder.PARENT), covert_parttern,pattern)
 			-- record match file from preview window
-			update_match_table("preview", Folder:by_kind(Folder.PREVIEW), covert_parttern)
+			update_match_table("preview", Folder:by_kind(Folder.PREVIEW), covert_parttern,pattern)
 		end
 	end	
 
@@ -283,9 +285,10 @@ local toggle_ui = ya.sync(function(st)
 
 	Status.mode = function(self)
 		local style = self.style()
+		local match_pattern = st.match_pattern and ":" .. st.match_pattern or ""
 		return ui.Line {
 			ui.Span(THEME.status.separator_open):fg(style.bg),
-			ui.Span(" SJ-" .. tostring(cx.active.mode):upper() .. " "):style(style),
+			ui.Span(" SJ-" .. tostring(cx.active.mode):upper() .. match_pattern .. " "):style(style),
 		}
 	end
 
@@ -347,6 +350,7 @@ local clear_state_str = ya.sync(function(state)
 	state.match = nil
 	state.next_char = nil
 	state.backouting = nil
+	state.match_pattern = nil
 	ya.render()
 end)
 
