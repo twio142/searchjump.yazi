@@ -183,7 +183,7 @@ local update_match_table = ya.sync(function(state, pane, folder, convert_pattern
 	end
 end)
 
-local record_match_file = ya.sync(function(state, patterns)
+local record_match_file = ya.sync(function(state, patterns,re_match)
 	local exist_match = false
 
 	if state.match == nil then
@@ -203,7 +203,7 @@ local record_match_file = ya.sync(function(state, patterns)
 		for ch in string.gmatch(pattern, "[%z\1-\127\194-\244][\128-\191]*") do
 			if ch:byte() > 127 and CH_TABLE[ch] then
 				covert_parttern = covert_parttern .. string.upper(CH_TABLE[ch]) .. "##"
-			elseif ch == "." then
+			elseif ch == "." and not re_match then
 				covert_parttern = covert_parttern .. "[.]"
 			else
 				covert_parttern = covert_parttern .. string.lower(ch)
@@ -323,7 +323,7 @@ local check_key_is_lable = ya.sync(function(state,final_input_str)
 	return nil
 end)
 
-local set_target_str = ya.sync(function(state, patterns, final_input_str)
+local set_target_str = ya.sync(function(state, patterns, final_input_str,re_match)
 
 	local url = check_key_is_lable(final_input_str)
 	if url then -- if the last str match is a lable key, not a searchchar,toggle jump action
@@ -343,7 +343,7 @@ local set_target_str = ya.sync(function(state, patterns, final_input_str)
 	state.next_char = nil
 
 	-- calculate match data
-	local exist_match = record_match_file(patterns)
+	local exist_match = record_match_file(patterns,re_match)
 
 	-- apply match data to render
 	ya.render()
@@ -469,6 +469,7 @@ return {
 		local input_str = ""
 		local patterns = {}
 		local final_input_str = ""
+		local re_match = false
 		while true do
 			local cand = ya.which { cands = INPUT_CANDS, silent = true }
 			if cand == nil then
@@ -486,18 +487,21 @@ return {
 				final_input_str = ""
 				input_str = ""
 				patterns = opt_search_patterns
+				re_match = true
 			elseif INPUT_KEY[cand] == "<Backspace>" then
 				input_str,final_input_str = backout_last_input(input_str)
 				patterns = {input_str}
+				re_match = false
 			else
 				final_input_str = INPUT_KEY[cand]
 				input_str = input_str .. string.lower(INPUT_KEY[cand])
 				patterns = {input_str}
+				re_match = false
 			end
 
 			flush_input_key_in_statusbar(input_str)
 
-			local want_exit = set_target_str(patterns,final_input_str)
+			local want_exit = set_target_str(patterns,final_input_str,re_match)
 			if want_exit then
 				break
 			end
