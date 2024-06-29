@@ -84,4 +84,4 @@ if you want to search chiese,for example,search `你好`,you can press `n` or `n
 
 - the `<Enter>` key will jump to the first match result or only result.
 
-- the `<Backspace>` key will backout input.
+- the `<Backspace>` key will backout the last key you input.
