@@ -162,7 +162,10 @@ local update_match_table = ya.sync(function(state, pane, folder, convert_pattern
 		local url = tostring(file.url)
 		local startPos, endPos, convert_name = get_match_position(name, convert_pattern)
 		if startPos then
+			-- if there are more than on pattern in input,show the final match result pattern in stausbar
 			state.match_pattern = pattern
+
+			-- record match file data
 			state.match[url] = {
 				key = {},
 				startPos = startPos,
@@ -287,7 +290,7 @@ local toggle_ui = ya.sync(function(st)
 
 	Status.mode = function(self)
 		local style = self.style()
-		local match_pattern = st.match_pattern and ":" .. st.match_pattern or ""
+		local match_pattern = (st.match_pattern and st.opt_show_search_in_statusbar) and ":" .. st.match_pattern or ""
 		return ui.Line {
 			ui.Span(THEME.status.separator_open):fg(style.bg),
 			ui.Span(" SJ-" .. tostring(cx.active.mode):upper() .. match_pattern .. " "):style(style),
@@ -345,7 +348,7 @@ local set_target_str = ya.sync(function(state, patterns, final_input_str)
 	-- apply match data to render
 	ya.render()
 
-	return not exist_match and true or false
+	return ((not exist_match) and state.opt_auto_exit_when_unmatch) and true or false
 end)
 
 local clear_state_str = ya.sync(function(state)
@@ -378,6 +381,12 @@ local set_opts_default = ya.sync(function(state)
 	if (state.opt_search_patterns == nil) then
 		state.opt_search_patterns = {}
 	end
+	if (state.opt_show_search_in_statusbar == nil) then
+		state.opt_show_search_in_statusbar = true
+	end
+	if (state.opt_auto_exit_when_unmatch == nil) then
+		state.opt_auto_exit_when_unmatch = true
+	end	
 	return state.opt_search_patterns
 end)
 
@@ -386,7 +395,14 @@ local backout_last_input = ya.sync(function(state,input_str)
 	input_str = input_str:sub(1,-2)
 
 	state.backouting = true
+	state.match_pattern = input_str
+	ya.render()
 	return input_str, final_input_str
+end)
+
+local flush_input_key_in_statusbar = ya.sync(function(state,input_str)
+	state.match_pattern = input_str
+	ya.render()
 end)
 
 local set_args_default = ya.sync(function(state,args)
@@ -422,6 +438,12 @@ return {
 		end
 		if (opts ~= nil and opts.search_patterns ~= nil) then
 			state.opt_search_patterns = opts.search_patterns
+		end
+		if (opts ~= nil and opts.show_search_in_statusbar ~= nil) then
+			state.opt_show_search_in_statusbar = opts.show_search_in_statusbar
+		end
+		if (opts ~= nil and opts.auto_exit_when_unmatch ~= nil) then
+			state.opt_auto_exit_when_unmatch = opts.auto_exit_when_unmatch
 		end
 	end,
 
@@ -459,6 +481,8 @@ return {
 				input_str = input_str .. string.lower(INPUT_KEY[cand])
 				patterns = {input_str}
 			end
+
+			flush_input_key_in_statusbar(input_str)
 
 			local want_exit = set_target_str(patterns,final_input_str)
 			if want_exit then
