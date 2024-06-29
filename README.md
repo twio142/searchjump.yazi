@@ -83,3 +83,5 @@ if you want to search chiese,for example,search `你好`,you can press `n` or `n
 -  the re match is case insensitive whether you use uppercase or lowercase in your regular expression
 
 - the `<Enter>` key will jump to the first match result or only result.
+
+- the `<Backspace>` key will backout input.
