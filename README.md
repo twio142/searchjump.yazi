@@ -63,6 +63,8 @@ require("searchjump"):setup {
     unmatch_fg = "#928374",
     match_str_fg = "#000000",
     match_str_bg = "#73AC3A",
+    first_match_str_fg = "#000000",
+    first_match_str_bg = "#CFC251",
     lable_fg = "#EADFC8",
     lable_bg = "#BA603D",
     only_current = false, -- only search the current window

@@ -107,6 +107,18 @@ local function get_match_position(name, find_str)
 	end
 end
 
+local get_first_match_lable = ya.sync(function(state)
+	if state.match == nil then
+		return nil
+	end
+
+	for url, _ in pairs(state.match) do
+		return #state.match[url].key > 0 and state.match[url].key[1] or nil
+	end	
+	
+	return nil
+end)
+
 -- apply search result to show
 local set_match_lable = ya.sync(function(state, url, name, file)
 	local span = {}
@@ -125,8 +137,15 @@ local set_match_lable = ya.sync(function(state, url, name, file)
 		table.insert(span, ui.Span(name:sub(1, startPos[1] - 1)):fg(state.opt_unmatch_fg))
 	end
 
+	local match_str_fg
+	local match_str_bg
+	local first_match_lable = get_first_match_lable()
+
 	while i <= #startPos do
-		table.insert(span, ui.Span(name:sub(startPos[i], endPos[i])):fg(state.opt_match_str_fg):bg(state.opt_match_str_bg))
+		match_str_fg = key[i] == first_match_lable and state.opt_first_match_str_fg or state.opt_match_str_fg
+		match_str_bg = key[i] == first_match_lable and state.opt_first_match_str_bg or state.opt_match_str_bg
+
+		table.insert(span, ui.Span(name:sub(startPos[i], endPos[i])):fg(match_str_fg):bg(match_str_bg))
 		if i <= #key then
 			table.insert(span, ui.Span(key[i]):fg(state.opt_lable_fg):bg(state.opt_lable_bg))
 		end
@@ -369,6 +388,12 @@ local set_opts_default = ya.sync(function(state)
 	if (state.opt_match_str_bg == nil) then
 		state.opt_match_str_bg = "#73AC3A"
 	end
+	if (state.opt_first_match_str_fg == nil) then
+		state.opt_first_match_str_fg = "#000000"
+	end
+	if (state.opt_first_match_str_bg == nil) then
+		state.opt_first_match_str_bg = "#CFC251"
+	end
 	if (state.opt_lable_fg == nil) then
 		state.opt_lable_fg = "#EADFC8"
 	end
@@ -405,18 +430,6 @@ local flush_input_key_in_statusbar = ya.sync(function(state,input_str)
 	ya.render()
 end)
 
-local get_first_match_lable = ya.sync(function(state)
-	if state.match == nil then
-		return nil
-	end
-
-	for url, _ in pairs(state.match) do
-		return #state.match[url].key > 0 and state.match[url].key[1] or nil
-	end	
-	
-	return nil
-end)
-
 local set_args_default = ya.sync(function(state,args)
 
 	if (args[1] ~= nil and args[1] == "autocd") then
@@ -437,6 +450,12 @@ return {
 		end
 		if (opts ~= nil and opts.match_str_bg ~= nil) then
 			state.opt_match_str_bg = opts.match_str_bg
+		end
+		if (opts ~= nil and opts.first_match_str_fg ~= nil) then
+			state.opt_first_match_str_fg = opts.first_match_str_fg
+		end
+		if (opts ~= nil and opts.first_match_str_bg ~= nil) then
+			state.opt_first_match_str_bg = opts.first_match_str_bg
 		end
 		if (opts ~= nil and opts.lable_fg ~= nil) then
 			state.opt_lable_fg = opts.lable_fg
