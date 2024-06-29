@@ -295,6 +295,11 @@ local toggle_ui = ya.sync(function(st)
 end)
 
 local check_key_is_lable = ya.sync(function(state,final_input_str) 
+	if state.backouting then
+		state.backouting = false
+		return nil
+	end
+
 	if not state.match then
 		return nil
 	end
@@ -341,6 +346,7 @@ end)
 local clear_state_str = ya.sync(function(state)
 	state.match = nil
 	state.next_char = nil
+	state.backouting = nil
 	ya.render()
 end)
 
@@ -367,6 +373,19 @@ local set_opts_default = ya.sync(function(state)
 		state.opt_search_patterns = {}
 	end
 	return state.opt_search_patterns
+end)
+
+local backout_last_input = ya.sync(function(state,input_str)
+	local final_input_str
+	if input_str:sub(-3,-1) == "[.]" then
+		final_input_str = input_str:sub(-4,-4)
+		input_str = input_str:sub(1,-4)
+	else
+		final_input_str = input_str:sub(-2,-2)
+	 	input_str = input_str:sub(1,-2)
+	end
+	state.backouting = true
+	return input_str, final_input_str
 end)
 
 local set_args_default = ya.sync(function(state,args)
@@ -432,8 +451,7 @@ return {
 				final_input_str = ""
 				patterns = opt_search_patterns
 			elseif INPUT_KEY[cand] == "<Backspace>" then
-				final_input_str = input_str:sub(-2,-1)
-				input_str = input_str:sub(1,-2)
+				input_str,final_input_str = backout_last_input(input_str)
 				patterns = {input_str}
 			elseif INPUT_KEY[cand] == "." then
 				final_input_str = ""
