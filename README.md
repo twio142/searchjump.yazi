@@ -60,7 +60,7 @@ desc = "searchjump mode(auto cd select folder)"
 ## opts setting (~/.config/yazi/init.lua)
 ```lua
 require("searchjump"):setup {
-	unmatch_fg = "#928374",
+    unmatch_fg = "#928374",
     match_str_fg = "#000000",
     match_str_bg = "#73AC3A",
     lable_fg = "#EADFC8",
