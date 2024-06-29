@@ -200,6 +200,8 @@ local record_match_file = ya.sync(function(state, patterns)
 		for ch in string.gmatch(pattern, "[%z\1-\127\194-\244][\128-\191]*") do
 			if ch:byte() > 127 and CH_TABLE[ch] then
 				covert_parttern = covert_parttern .. string.upper(CH_TABLE[ch]) .. "##"
+			elseif ch == "." then
+				covert_parttern = covert_parttern .. "[.]"
 			else
 				covert_parttern = covert_parttern .. string.lower(ch)
 			end
@@ -380,14 +382,9 @@ local set_opts_default = ya.sync(function(state)
 end)
 
 local backout_last_input = ya.sync(function(state,input_str)
-	local final_input_str
-	if input_str:sub(-3,-1) == "[.]" then
-		final_input_str = input_str:sub(-4,-4)
-		input_str = input_str:sub(1,-4)
-	else
-		final_input_str = input_str:sub(-2,-2)
-	 	input_str = input_str:sub(1,-2)
-	end
+	local final_input_str = input_str:sub(-2,-2)
+	input_str = input_str:sub(1,-2)
+
 	state.backouting = true
 	return input_str, final_input_str
 end)
@@ -456,10 +453,6 @@ return {
 				patterns = opt_search_patterns
 			elseif INPUT_KEY[cand] == "<Backspace>" then
 				input_str,final_input_str = backout_last_input(input_str)
-				patterns = {input_str}
-			elseif INPUT_KEY[cand] == "." then
-				final_input_str = ""
-				input_str = input_str .. "[.]"
 				patterns = {input_str}
 			else
 				final_input_str = INPUT_KEY[cand]
