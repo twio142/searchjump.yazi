@@ -343,7 +343,7 @@ local set_target_str = ya.sync(function(state, patterns, final_input_str,re_matc
 
 	local url = check_key_is_lable(final_input_str)
 	if url then -- if the last str match is a lable key, not a searchchar,toggle jump action
-		if not state.args_autocd and  state.match[url].pane == "current"then-- if target file in current pane, use `arrow` instead of`reveal` tosupport select mode
+		if not state.args_autocd and  state.match[url].pane == "current" then-- if target file in current pane, use `arrow` instead of`reveal` tosupport select mode
 			local folder = Folder:by_kind(Folder.CURRENT)
 			ya.manager_emit("arrow",{ state.match[url].cursorPos - folder.cursor - 1 + folder.offset})
 		elseif state.args_autocd and state.match[url].isdir then
