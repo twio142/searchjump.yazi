@@ -380,7 +380,7 @@ end)
 
 local set_opts_default = ya.sync(function(state)
 	if (state.opt_unmatch_fg == nil) then
-		state.opt_unmatch_fg = "#928374"
+		state.opt_unmatch_fg = "#b2a496"
 	end
 	if (state.opt_match_str_fg == nil) then
 		state.opt_match_str_fg = "#000000"
@@ -392,7 +392,7 @@ local set_opts_default = ya.sync(function(state)
 		state.opt_first_match_str_fg = "#000000"
 	end
 	if (state.opt_first_match_str_bg == nil) then
-		state.opt_first_match_str_bg = "#CFC251"
+		state.opt_first_match_str_bg = "#73AC3A"
 	end
 	if (state.opt_lable_fg == nil) then
 		state.opt_lable_fg = "#EADFC8"
@@ -407,7 +407,7 @@ local set_opts_default = ya.sync(function(state)
 		state.opt_search_patterns = {}
 	end
 	if (state.opt_show_search_in_statusbar == nil) then
-		state.opt_show_search_in_statusbar = true
+		state.opt_show_search_in_statusbar = false
 	end
 	if (state.opt_auto_exit_when_unmatch == nil) then
 		state.opt_auto_exit_when_unmatch = true
