@@ -70,6 +70,7 @@ require("searchjump"):setup {
     only_current = false, -- only search the current window
     show_search_in_statusbar = false,
     auto_exit_when_unmatch = true,
+    enable_capital_lable = false,
     search_patterns = {}  -- demo:{"%.e%d+","s%d+e%d+"}
 }
 ```

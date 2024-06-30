@@ -240,6 +240,11 @@ local record_match_file = ya.sync(function(state, patterns,re_match)
 	local valid_lable = {}
 	for _, value in ipairs(KEYS_LABLE) do
 		local found = false
+
+		if not state.opt_enable_capital_lable and string.byte(value) > 64 and string.byte(value) < 91 then
+			goto nextlable
+		end  
+
 		for _, v in ipairs(state.next_char) do
 			if string.lower(value) == v then
 				found = true
@@ -250,6 +255,8 @@ local record_match_file = ya.sync(function(state, patterns,re_match)
 		if not found then
 			table.insert(valid_lable, value)
 		end
+
+		::nextlable::
 	end
 
 	-- assign valid key to each match file
@@ -408,6 +415,9 @@ local set_opts_default = ya.sync(function(state)
 	if (state.opt_auto_exit_when_unmatch == nil) then
 		state.opt_auto_exit_when_unmatch = true
 	end	
+	if (state.opt_enable_capital_lable == nil) then
+		state.opt_enable_capital_lable = false
+	end	
 	return state.opt_search_patterns
 end)
 
@@ -475,6 +485,9 @@ return {
 		end
 		if (opts ~= nil and opts.auto_exit_when_unmatch ~= nil) then
 			state.opt_auto_exit_when_unmatch = opts.auto_exit_when_unmatch
+		end
+		if (opts ~= nil and opts.enable_capital_lable ~= nil) then
+			state.opt_enable_capital_lable = opts.enable_capital_lable
 		end
 	end,
 
