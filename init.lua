@@ -169,7 +169,7 @@ local set_match_lable = ya.sync(function(state, url, name, file)
 end)
 
 -- update the match data after input a str
-local update_match_table = ya.sync(function(state, pane, folder, convert_pattern,pattern)
+local update_match_table = ya.sync(function(state, pane, folder, convert_pattern)
 	if not folder then
 		return
 	end
@@ -181,9 +181,6 @@ local update_match_table = ya.sync(function(state, pane, folder, convert_pattern
 		local url = tostring(file.url)
 		local startPos, endPos, convert_name = get_match_position(name, convert_pattern)
 		if startPos then
-			-- if there are more than on pattern in input,show the final match result pattern in stausbar
-			state.match_pattern = pattern
-
 			-- record match file data
 			state.match[url] = {
 				key = {},
@@ -214,7 +211,6 @@ local record_match_file = ya.sync(function(state, patterns,re_match)
 	end
 
 	local covert_parttern
-	local pattern
 
 	for _, pattern in ipairs(patterns) do
 		covert_parttern = ""
@@ -230,13 +226,13 @@ local record_match_file = ya.sync(function(state, patterns,re_match)
 		end	
 
 		-- record match file from current window
-		update_match_table("current",Folder:by_kind(Folder.CURRENT), covert_parttern,pattern)
+		update_match_table("current",Folder:by_kind(Folder.CURRENT), covert_parttern)
 
 		if not state.opt_only_current then
 			-- record match file from parent window
-			update_match_table("parent", Folder:by_kind(Folder.PARENT), covert_parttern,pattern)
+			update_match_table("parent", Folder:by_kind(Folder.PARENT), covert_parttern)
 			-- record match file from preview window
-			update_match_table("preview", Folder:by_kind(Folder.PREVIEW), covert_parttern,pattern)
+			update_match_table("preview", Folder:by_kind(Folder.PREVIEW), covert_parttern)
 		end
 	end	
 
@@ -425,8 +421,12 @@ local backout_last_input = ya.sync(function(state,input_str)
 	return input_str, final_input_str
 end)
 
-local flush_input_key_in_statusbar = ya.sync(function(state,input_str)
-	state.match_pattern = input_str
+local flush_input_key_in_statusbar = ya.sync(function(state,input_str,re_match)
+	if re_match then
+		state.match_pattern = "[~]"
+	else
+		state.match_pattern = input_str
+	end
 	ya.render()
 end)
 
@@ -518,7 +518,7 @@ return {
 				re_match = false
 			end
 
-			flush_input_key_in_statusbar(input_str)
+			flush_input_key_in_statusbar(input_str,re_match)
 
 			local want_exit = set_target_str(patterns,final_input_str,re_match)
 			if want_exit then
