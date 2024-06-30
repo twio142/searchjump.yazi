@@ -179,6 +179,7 @@ local update_match_table = ya.sync(function(state, pane, folder, convert_pattern
 	for i, file in ipairs(folder.window) do
 		local name = file.name:gsub("\r", "?", 1)
 		local url = tostring(file.url)
+		local next_char = ""
 		local startPos, endPos, convert_name = get_match_position(name, convert_pattern)
 		if startPos then
 			-- record match file data
@@ -192,7 +193,8 @@ local update_match_table = ya.sync(function(state, pane, folder, convert_pattern
 			}
 			i = 1
 			while i <= #startPos do -- the next char of match string can't be used as lable for supporing further search
-				state.next_char[#state.next_char + 1] = string.lower(convert_name:sub(endPos[i] + 1, endPos[i] + 1))
+				next_char = string.lower(convert_name:sub(endPos[i] + 1, endPos[i] + 1))
+				state.next_char[next_char] = ""
 				i = i + 1
 			end
 		end
@@ -239,20 +241,12 @@ local record_match_file = ya.sync(function(state, patterns,re_match)
 	-- get valid key list (KEYS_LABLE but exclude state.next_char table)
 	local valid_lable = {}
 	for _, value in ipairs(KEYS_LABLE) do
-		local found = false
 
 		if not state.opt_enable_capital_lable and string.byte(value) > 64 and string.byte(value) < 91 then
 			goto nextlable
 		end  
 
-		for _, v in ipairs(state.next_char) do
-			if string.lower(value) == v then
-				found = true
-				break
-			end
-		end
-
-		if not found then
+		if state.next_char[string.lower(value)] == nil then
 			table.insert(valid_lable, value)
 		end
 
