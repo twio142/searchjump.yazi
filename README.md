@@ -5,10 +5,10 @@ A Yazi plugin which the behavior consistent with flash.nvim in Neovim, allow sea
 
 
 ## english search
-https://github.com/DreamMaoMao/searchjump.yazi/assets/30348075/eec237c9-91be-4b6e-9db8-a84eb419cae5
+https://gitee.com/DreamMaoMao/searchjump.yazi/assets/30348075/eec237c9-91be-4b6e-9db8-a84eb419cae5
 
 ## chiese pinyin search(first character of a word pinyin)
-https://github.com/DreamMaoMao/searchjump.yazi/assets/30348075/8acf8316-c8d4-497d-af5a-7d85924c57a2
+https://gitee.com/DreamMaoMao/searchjump.yazi/assets/30348075/8acf8316-c8d4-497d-af5a-7d85924c57a2
 
 ## regular expression search(set patterns in option `search_patterns`)
 - for example:
@@ -16,7 +16,7 @@ https://github.com/DreamMaoMao/searchjump.yazi/assets/30348075/8acf8316-c8d4-497
 search_patterns = {"%.e%d+","s%d+e%d+","%d+.1080p","第%d+集"}
 ```
 
-https://github.com/DreamMaoMao/searchjump.yazi/assets/30348075/a68bd599-04c6-467a-a987-53a6684529af
+https://gitee.com/DreamMaoMao/searchjump.yazi/assets/30348075/a68bd599-04c6-467a-a987-53a6684529af
 
 
 > [!NOTE]
@@ -28,7 +28,7 @@ https://github.com/DreamMaoMao/searchjump.yazi/assets/30348075/a68bd599-04c6-467
 ### Linux
 
 ```bash
-git clone https://github.com/DreamMaoMao/searchjump.yazi.git ~/.config/yazi/plugins/searchjump.yazi
+git clone https://gitee.com/DreamMaoMao/searchjump.yazi.git ~/.config/yazi/plugins/searchjump.yazi
 ```
 
 ### Windows
@@ -37,7 +37,7 @@ With `Powershell` :
 
 ```powershell
 if (!(Test-Path $env:APPDATA\yazi\config\plugins\)) {mkdir $env:APPDATA\yazi\config\plugins\}
-git clone https://github.com/DreamMaoMao/searchjump.yazi.git $env:APPDATA\yazi\config\plugins\searchjump.yazi
+git clone https://gitee.com/DreamMaoMao/searchjump.yazi.git $env:APPDATA\yazi\config\plugins\searchjump.yazi
 ```
 
 ## Usage
