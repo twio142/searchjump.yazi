@@ -278,7 +278,7 @@ end)
 local switch_entity_hightlights = ya.sync(function(st,fn)
 	local inc_backup = Entity._inc
 	Entity._inc = st.highlights_id - 1
-	local id = Entity:children_add(fn, 3000)
+	local id = Entity:children_add(fn, 4000)
 	Entity._inc =  inc_backup
 	return id
 end)
@@ -298,7 +298,7 @@ local toggle_ui = ya.sync(function(st)
 	end
 
 	for _, value in ipairs(Entity._children) do
-		if value["order"] == 3000 then
+		if value["order"] == 4000 then
 			st.highlights_function = value[1]
 			st.highlights_id = value["id"]
 			break
