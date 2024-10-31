@@ -377,7 +377,8 @@ local set_target_str = ya.sync(function(state, patterns, final_input_str,re_matc
 		else
 			ya.manager_emit("reveal",{ url })
 		end
-		return true
+		-- two args is (want_exit,is_match)
+		return true,true
 	end
 
 	-- clears the previously calculated data when input change
@@ -390,9 +391,9 @@ local set_target_str = ya.sync(function(state, patterns, final_input_str,re_matc
 	-- apply match data to render
 	ya.render()
 	if not exist_match and (re_match == true or patterns[1] ~= "" ) and state.opt_auto_exit_when_unmatch then
-		return true
+		return true, exist_match
 	else
-		return false
+		return false, exist_match
 	end	
 end)
 
@@ -554,11 +555,20 @@ return {
 				re_match = false
 			end
 
+			::reset::
 			flush_input_key_in_statusbar(input_str,re_match)
 
-			local want_exit = set_target_str(patterns,final_input_str,re_match)
+			local want_exit,is_match = set_target_str(patterns,final_input_str,re_match)
 			if want_exit then
 				break
+			end
+
+			-- If the string after the entered character does not match anything, -- then the string input is cancelled and keep the previous input matches status
+			if not is_match then
+				input_str,final_input_str = backout_last_input(input_str)
+				patterns = {input_str}
+				re_match = false		
+				goto reset
 			end
 			::continue::
 		end
