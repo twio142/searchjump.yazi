@@ -543,7 +543,7 @@ return {
 			-- If the string after the entered character does not match anything, -- then the string input is cancelled and keep the previous input matches status
 			if not is_match and re_match then
 				break
-			elseif not is_match then
+			elseif not is_match and input_str ~= "" then
 				input_str,final_input_str = backout_last_input(input_str)
 				patterns = {input_str}
 				goto reset
