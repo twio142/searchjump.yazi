@@ -1,6 +1,6 @@
 # searchjump.yazi
 
-A Yazi plugin which the behavior consistent with flash.nvim in Neovim, allow search str to generate lable to jump.
+A Yazi plugin which the behavior consistent with flash.nvim in Neovim, allow search str to generate label to jump.
 
 
 
@@ -47,10 +47,10 @@ require("searchjump"):setup {
 	opt_unmatch_fg = "#928374",
     opt_match_str_fg = "#000000",
     opt_match_str_bg = "#73AC3A",
-    opt_lable_fg = "#EADFC8",
-    opt_lable_bg = "#BA603D"
+    opt_label_fg = "#EADFC8",
+    opt_label_bg = "#BA603D"
 }
 ```
 
-When you see some character singal lable in right of the entry.
+When you see some character singal label in right of the entry.
 Press the key of the character will jump to the corresponding entry
