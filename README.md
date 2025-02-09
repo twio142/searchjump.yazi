@@ -41,6 +41,15 @@ run = "plugin searchjump"
 desc = "searchjump mode"
 ```
 
+Or enter directory automatically when jumping onto it:
+
+```toml
+[[manager.prepend_keymap]]
+on   = [ "i" ]
+run = "plugin searchjump -- autocd"
+desc = "searchjump mode"
+```
+
 ## opts setting (~/.config/yazi/init.lua)
 ```lua
 require("searchjump"):setup({
